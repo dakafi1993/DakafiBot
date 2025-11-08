@@ -5,8 +5,17 @@ const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-app.get("/", (req, res) => res.send("Bot běží."));
-app.listen(PORT, () => console.log(`🌍 Server běží na portu ${PORT}`));
+// Health check endpoint
+app.get("/", (req, res) => {
+  console.log("✅ Health check received");
+  res.status(200).send("Bot běží OK");
+});
+
+// Start serveru HNED
+const server = app.listen(PORT, "0.0.0.0", () => {
+  console.log(`🌍 Server běží na portu ${PORT}`);
+  console.log(`🔗 Health check: http://0.0.0.0:${PORT}/`);
+});
 
 // Teď Discord bot
 const {
