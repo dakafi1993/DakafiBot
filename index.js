@@ -44,11 +44,8 @@ client.on("messageCreate", (msg) => {
   
   if (msg.content === "!setroles") {
     console.log(`📩 Command received in channel: ${msg.channel.id}`);
+    console.log(`� Channel name: ${msg.channel.name}`);
     console.log(`🔑 Expected ROLE_CHANNEL: ${process.env.ROLE_CHANNEL}`);
-    
-    if (msg.channel.id !== process.env.ROLE_CHANNEL) {
-      return msg.reply(`❌ Použij to v <#${process.env.ROLE_CHANNEL}> (tvůj kanál: ${msg.channel.id})`);
-    }
 
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder().setCustomId("cs2").setLabel("CS2 💀").setStyle(ButtonStyle.Primary),
