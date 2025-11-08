@@ -40,9 +40,14 @@ client.on("guildMemberAdd", (member) => {
 
 // Tlačítka pro role
 client.on("messageCreate", (msg) => {
+  if (msg.author.bot) return; // Ignoruj boty
+  
   if (msg.content === "!setroles") {
+    console.log(`📩 Command received in channel: ${msg.channel.id}`);
+    console.log(`🔑 Expected ROLE_CHANNEL: ${process.env.ROLE_CHANNEL}`);
+    
     if (msg.channel.id !== process.env.ROLE_CHANNEL) {
-      return msg.reply("Použij to ve správném kanálu.");
+      return msg.reply(`❌ Použij to v <#${process.env.ROLE_CHANNEL}> (tvůj kanál: ${msg.channel.id})`);
     }
 
     const row = new ActionRowBuilder().addComponents(
