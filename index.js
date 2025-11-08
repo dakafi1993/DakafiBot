@@ -79,3 +79,8 @@ client.on("interactionCreate", async (interaction) => {
 
 // Přihlášení bota
 client.login(process.env.TOKEN);
+// Drží aplikaci naživu pro Railway
+const express = require("express");
+const app = express();
+app.get("/", (req, res) => res.send("Bot běží."));
+app.listen(8080, () => console.log("🌍 Server běží na portu 8080"));
