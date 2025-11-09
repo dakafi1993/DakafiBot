@@ -32,16 +32,37 @@ client.on("messageCreate", async (msg) => {
 
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isButton()) return;
-  const roleID = process.env["ROLE_" + interaction.customId.toUpperCase()];
-  if (!roleID) return;
-  const role = interaction.guild.roles.cache.get(roleID);
-  if (!role) return await interaction.reply({ content: " Role neexistuje", ephemeral: true });
-  if (interaction.member.roles.cache.has(roleID)) {
-    await interaction.member.roles.remove(role);
-    await interaction.reply({ content: " Role odebrána", ephemeral: true });
-  } else {
-    await interaction.member.roles.add(role);
-    await interaction.reply({ content: " Role přidána", ephemeral: true });
+  
+  try {
+    const roleID = process.env["ROLE_" + interaction.customId.toUpperCase()];
+    if (!roleID) {
+      console.log("⚠️ Role ID není v .env pro: " + interaction.customId);
+      return await interaction.reply({ content: "❌ Role není nakonfigurována", ephemeral: true });
+    }
+    
+    // Načti role ze serveru pokud nejsou v cache
+    await interaction.guild.roles.fetch();
+    const role = interaction.guild.roles.cache.get(roleID);
+    
+    if (!role) {
+      console.log("❌ Role " + roleID + " neexistuje na serveru");
+      console.log("📋 Dostupné role:");
+      interaction.guild.roles.cache.forEach(r => console.log("  - " + r.name + " (" + r.id + ")"));
+      return await interaction.reply({ content: "❌ Role neexistuje (ID: " + roleID + ")", ephemeral: true });
+    }
+    
+    if (interaction.member.roles.cache.has(roleID)) {
+      await interaction.member.roles.remove(role);
+      await interaction.reply({ content: "❌ Role **" + role.name + "** odebrána", ephemeral: true });
+    } else {
+      await interaction.member.roles.add(role);
+      await interaction.reply({ content: "✅ Role **" + role.name + "** přidána", ephemeral: true });
+    }
+  } catch (error) {
+    console.error("❌ Error:", error);
+    if (!interaction.replied) {
+      await interaction.reply({ content: "❌ Chyba. Bot nemá oprávnění spravovat role.", ephemeral: true });
+    }
   }
 });
 
